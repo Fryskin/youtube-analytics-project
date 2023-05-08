@@ -1,14 +1,14 @@
 from googleapiclient.discovery import build
-import json
 import os
 
 
 class Video:
     def __init__(self, video_id):
-        api_key = os.getenv('API_KEY')
-        youtube = build('youtube', 'v3', developerKey=api_key)
-        video_response = youtube.videos().list(part='snippet,statistics,contentDetails,topicDetails',
-                                               id=video_id).execute()
+        self.__api_key = os.getenv('API_KEY')
+        self.__youtube = build('youtube', 'v3', developerKey=self.__api_key)
+
+        video_response = self.__youtube.videos().list(part='snippet,statistics,contentDetails,topicDetails',
+                                                      id=video_id).execute()
 
         self.video_id = video_id
         self.video_title = video_response['items'][0]['snippet']['title']

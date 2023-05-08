@@ -7,26 +7,24 @@ import datetime
 class PlayList:
 
     def __init__(self, playlist_id: str):
-        api_key = os.getenv('API_KEY')
-        youtube = build('youtube', 'v3', developerKey=api_key)
-        title_info = youtube.playlists().list(id=playlist_id, part='snippet').execute()
+        self.__api_key = os.getenv('API_KEY')
+        self.__youtube = build('youtube', 'v3', developerKey=self.__api_key)
+
+        title_info = self.__youtube.playlists().list(id=playlist_id, part='snippet').execute()
 
         self._playlist_id = playlist_id
         self.title = title_info["items"][0]["snippet"]["title"]
         self.url = f"https://www.youtube.com/playlist?list={playlist_id}"
 
     def total_duration(self):
-        api_key = os.getenv('API_KEY')
-        youtube = build('youtube', 'v3', developerKey=api_key)
-        playlist_videos = youtube.playlistItems().list(playlistId=self._playlist_id,
-                                                       part='contentDetails',
-                                                       maxResults=50,
-                                                       ).execute()
+
+        playlist_videos = self.__youtube.playlistItems().list(playlistId=self._playlist_id, part='contentDetails',
+                                                              maxResults=50,
+                                                              ).execute()
 
         video_ids = [video['contentDetails']['videoId'] for video in playlist_videos['items']]
-        video_response = youtube.videos().list(part='contentDetails,statistics',
-                                               id=','.join(video_ids)
-                                               ).execute()
+        video_response = self.__youtube.videos().list(part='contentDetails,statistics', id=','.join(video_ids)
+                                                      ).execute()
 
         total_video_duration = datetime.timedelta(hours=0, minutes=0, seconds=0)
 
@@ -43,17 +41,14 @@ class PlayList:
         return total_video_duration
 
     def show_best_video(self):
-        api_key = os.getenv('API_KEY')
-        youtube = build('youtube', 'v3', developerKey=api_key)
-        playlist_videos = youtube.playlistItems().list(playlistId=self._playlist_id,
-                                                       part='contentDetails',
-                                                       maxResults=50,
-                                                       ).execute()
+
+        playlist_videos = self.__youtube.playlistItems().list(playlistId=self._playlist_id, part='contentDetails',
+                                                              maxResults=50,
+                                                              ).execute()
 
         video_ids = [video['contentDetails']['videoId'] for video in playlist_videos['items']]
-        video_response = youtube.videos().list(part='contentDetails,statistics',
-                                               id=','.join(video_ids)
-                                               ).execute()
+        video_response = self.__youtube.videos().list(part='contentDetails,statistics', id=','.join(video_ids)
+                                                      ).execute()
 
         best_video_like_count = 0
         best_video_url = ''
