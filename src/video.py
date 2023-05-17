@@ -8,7 +8,6 @@ class Video:
         try:
             self.__api_key = os.getenv('API_KEY')
             self.__youtube = build('youtube', 'v3', developerKey=self.__api_key)
-
             video_response = self.__youtube.videos().list(part='snippet,statistics,contentDetails,topicDetails',
                                                           id=video_id).execute()
 
